@@ -1,5 +1,4 @@
-// ★HTMLを更新して反映させたい時は、このバージョン番号を書き換えます（例: v1.0.0 → v1.0.1）
-const CACHE_NAME = 'clinical-pocket-v1.0.0';
+const CACHE_NAME = 'clinical-pocket-cache';
 
 const ASSETS = [
   './',
@@ -27,10 +26,10 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// ネットワーク優先、オフライン時はキャッシュを返す
+// ネットワーク優先（オンライン時は常に最新版を取得しキャッシュを更新、オフライン時はキャッシュを返す）
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    fetch(event.request)
+    fetch(event.request, { cache: 'no-cache' })
       .then((res) => {
         const clone = res.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
